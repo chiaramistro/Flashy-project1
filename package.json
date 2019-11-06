@@ -1,0 +1,24 @@
+{
+  "name": "project1-flashcards",
+  "version": "0.0.0",
+  "description": "No description",
+  "author": null,
+  "private": true,
+  "main": "node_modules/expo/AppEntry.js",
+  "devDependencies": {
+    "babel-preset-expo": "^7.0.0"
+  },
+  "dependencies": {
+    "expo": "35.0.0",
+    "react": "16.8.3",
+    "react-native": "0.59.8",
+    "@expo/vector-icons": "10.0.0",
+    "expo-asset": "7.0.0",
+    "expo-font": "7.0.0",
+    "expo-constants": "7.0.0",
+    "prop-types": "15.7.2",
+    "react-dom": "16.8.3",
+    "react-native-web": "0.11.7",
+    "react-native-paper": "2.16.0"
+  }
+}
