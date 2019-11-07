@@ -9,7 +9,7 @@ export default class Deck extends React.Component {
     super(props);
 
     this.state = {
-      key: props.key,
+      keyy: props.keyy,
       name: props.name,
       cards: props.cards,
       chosen: false,
@@ -26,14 +26,21 @@ export default class Deck extends React.Component {
     };
   }
 
+  //Called to show the component AddDeck
   chooseDeck() {
     this.setState({ chosen: true });
-
     setInterval(() => {
       this.setState({ timeTaken: this.state.timeTaken + 1 });
     }, 1000);
   }
 
+  //If there are still cards to be shown inside the deck, then the
+  //index is increased to show the remaining cards.
+  //If the deck came to an end, then the cards in the deck are
+  //finished and we perform the rearrangement, so that the cards
+  //are ordered --> wrong cards + (rest of the cards, if any) + right cards.
+  //Moreover, the wrong and the right cards are ordered from the biggest
+  //to the smallest time taken to guess them.
   updateIndex() {
     if (this.state.index == this.state.cards.length - 1) {
       this.setState({ chosen: false });
@@ -54,31 +61,43 @@ export default class Deck extends React.Component {
         guesses: newGuesses,
       });
       this.setState({ rightGuesses: [], wrongGuesses: [] });
-
     } else {
       this.setState(prev => ({ index: prev.index + 1 }));
       this.setState({ timeTaken: 0 });
     }
   }
 
+  //Called to show the component RenameDeck
   rename() {
     this.setState({ rename: true });
   }
 
+  //Handle response data from RenameDeck
   renameDeck = renamedDeck => {
     this.setState({ rename: false });
     this.setState({ name: renamedDeck.name });
   };
 
+  //Called to show the component AddCard
   addCard() {
     this.setState({ add: true });
   }
 
+  //Handle response data from AddCard
   addNewCard = newCard => {
     this.setState({ add: false });
     this.setState(prev => ({ cards: [...prev.cards, newCard] }));
+    const currentKey = this.state.keyy;
+    this.props.onSubmit({
+      front: newCard.front,
+      back: newCard.back,
+      key: currentKey,
+    });
   };
 
+  //Callen when a card was guessed 'right', meaning that the user pressed the
+  //button "right". The card is put inside an array containing all the right
+  //guesses.
   considerRight() {
     const singleCard = {};
     singleCard['index'] = this.state.index;
@@ -90,13 +109,17 @@ export default class Deck extends React.Component {
       return item.front != singleCard.front;
     });
 
-    this.setState(prev => ({
-      rightGuesses: [...prev.rightGuesses, singleCard],
-      remaining: newRemaining
-    }), () => this.updateIndex());
-
+    this.setState(
+      prev => ({
+        rightGuesses: [...prev.rightGuesses, singleCard],
+        remaining: newRemaining,
+      }),
+      () => this.updateIndex()
+    );
   }
-
+  //Callen when a card was guessed 'wrong', meaning that the user pressed the
+  //button "wrong". The card is put inside an array containing all the wrong
+  //guesses.
   considerWrong() {
     const singleCard = {};
     singleCard['index'] = this.state.index;
@@ -104,28 +127,40 @@ export default class Deck extends React.Component {
     singleCard['back'] = this.state.cards[this.state.index].back;
     singleCard['timeTaken'] = this.state.timeTaken;
 
-  const newRemaining = this.state.remaining.filter(function(item) {
+    const newRemaining = this.state.remaining.filter(function(item) {
       return item.front != singleCard.front;
     });
 
-       this.setState(prev => ({
-     wrongGuesses: [...prev.wrongGuesses, singleCard],
-      remaining: [...newRemaining]
-    }), () => this.updateIndex());
-
+    this.setState(
+      prev => ({
+        wrongGuesses: [...prev.wrongGuesses, singleCard],
+        remaining: [...newRemaining],
+      }),
+      () => this.updateIndex()
+    );
   }
 
+  //After the user finishes the cards, it can begin to study them
+  //all over again. However, a rearrangement is made so that the cards
+  //are ordered in a specific way.
   tryAgain() {
     this.setState({ cards: this.state.guesses });
-    this.setState({ guesses: [], index: 0, timeTaken: 0, remaining: this.state.cards });
+    this.setState({
+      guesses: [],
+      index: 0,
+      timeTaken: 0,
+      remaining: this.state.cards,
+    });
     this.setState({ end: false });
     this.setState({ chosen: true });
   }
 
+  //Called to show the possible deleatable cards
   deleteCard() {
     this.setState({ deleteCard: true });
   }
 
+  //Called to delete a specific card
   deleteThisCard(cardToDelete) {
     var newCards = [];
     this.state.cards.map(card => {
@@ -137,10 +172,17 @@ export default class Deck extends React.Component {
     this.setState({ deleteCard: false });
   }
 
+  //Called when the user wants to restart from scratch, without finishing
+  //to read all the cards. Here a rearrangement is made, considering also
+  //the 'remaining' cards, that is the cards that were not read by
+  //the user
   restart() {
-
-    const newGuesses = [...this.state.wrongGuesses, ...this.state.remaining, ...this.state.rightGuesses];
-    console.log(newGuesses)
+    const newGuesses = [
+      ...this.state.wrongGuesses,
+      ...this.state.remaining,
+      ...this.state.rightGuesses,
+    ];
+    console.log(newGuesses);
 
     this.setState({ guesses: newGuesses });
     this.setState({ cards: newGuesses });
@@ -156,6 +198,7 @@ export default class Deck extends React.Component {
   }
 
   render() {
+    //If the deck is chosen, the first card is shown
     if (this.state.chosen) {
       return (
         <View>
@@ -186,30 +229,34 @@ export default class Deck extends React.Component {
       );
     }
 
+    //Showing the possible deleatable cards
     if (this.state.deleteCard) {
       return (
         <View style={styles.container}>
-          <Text style={styles.paragraph2}> Which card do you want to delete?</Text>
-          <ScrollView style={{height: 250}} >
+          <Text style={styles.paragraph2}>
+            {' '}
+            Which card do you want to delete?
+          </Text>
+          <ScrollView style={{ height: 250 }}>
             {this.state.cards.map(card => {
               if (card.front != '') {
-              return (
-                <View style={styles.container}>
-                  <Button
-                    color="#f9af00"
-                    title={card.front}
-                    onPress={() => this.deleteThisCard(card)}
-                  />
-                </View>
-              );
-            }
-            })
-            }
+                return (
+                  <View style={styles.container}>
+                    <Button
+                      color="#f9af00"
+                      title={card.front}
+                      onPress={() => this.deleteThisCard(card)}
+                    />
+                  </View>
+                );
+              }
+            })}
           </ScrollView>
         </View>
       );
     }
 
+    //Showing the component RenameDeck
     if (this.state.rename) {
       return (
         <View>
@@ -218,6 +265,7 @@ export default class Deck extends React.Component {
       );
     }
 
+    //Showing the component AddCard
     if (this.state.add) {
       return (
         <View>
@@ -226,6 +274,8 @@ export default class Deck extends React.Component {
       );
     }
 
+    //Showing a message when the cards from the deck are finished.
+    //At this point the user can go back to the homepage or can start again.
     if (this.state.end) {
       return (
         <View>
@@ -239,6 +289,7 @@ export default class Deck extends React.Component {
       );
     }
 
+    //Deck component, showing all the information regarding a specific chosen deck
     return (
       <View style={styles.container}>
         <Text style={styles.paragraph}> {this.state.name} </Text>
@@ -270,7 +321,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-    paragraph2: {
+  paragraph2: {
     margin: 10,
     fontSize: 15,
     textAlign: 'center',

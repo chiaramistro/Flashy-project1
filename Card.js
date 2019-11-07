@@ -14,6 +14,9 @@ export default class Card extends React.Component {
     };
   }
 
+  //Function used to switch between 'front' part and 'back' part
+  //of a card when clicking 'show'.
+
   switch() {
     this.setState(prev => ({ switching: !prev.switching }));
 
@@ -24,11 +27,13 @@ export default class Card extends React.Component {
     }
   }
 
+  //One side is shown to the user that can check his answer
+  //clicking the 'show' button
   render() {
     return (
       <View>
         <Text style={styles.card}>{this.state.currentSide}</Text>
-        <Button color='#f9af00' title="Cover" onPress={() => this.switch()} />
+        <Button color="#f9af00" title="Show" onPress={() => this.switch()} />
       </View>
     );
   }

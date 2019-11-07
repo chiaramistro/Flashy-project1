@@ -12,6 +12,7 @@ export default class AddCard extends React.Component {
     };
   }
 
+  //Functions to handle changes in the input field
   handleFrontChange = front => {
     this.setState({ front: front }, this.validateForm);
   };
@@ -24,10 +25,12 @@ export default class AddCard extends React.Component {
     this.setState({ isValid: true });
   };
 
+  //Data of input field is submitted
   handleSubmit = () => {
     this.props.onSubmit({ front: this.state.front, back: this.state.back });
   };
 
+  //The user can enter the 'front' part and the 'back' part of the new card
   render() {
     return (
       <View>
@@ -46,7 +49,7 @@ export default class AddCard extends React.Component {
         />
         <Button
           title="Confirm"
-          color='#f9af00'
+          color="#f9af00"
           onPress={this.handleSubmit}
           disabled={!this.state.isValid}
         />
@@ -62,7 +65,7 @@ const styles = StyleSheet.create({
     padding: 5,
     margin: 20,
   },
-    paragraph2: {
+  paragraph2: {
     margin: 10,
     fontSize: 15,
     textAlign: 'center',

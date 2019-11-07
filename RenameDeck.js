@@ -15,6 +15,7 @@ export default class RenameDeck extends React.Component {
     };
   }
 
+  //Function to handle changes in the input field
   handleNameChange = name => {
     this.setState({ name: name }, this.validateForm);
   };
@@ -23,10 +24,12 @@ export default class RenameDeck extends React.Component {
     this.setState({ isValid: true });
   };
 
+  //Data of input field is submitted
   handleSubmit = () => {
     this.props.onSubmit({ name: this.state.name });
   };
 
+  //The user can enter the new name for an already-existing deck
   render() {
     return (
       <View>

@@ -7,11 +7,12 @@ export default class AddDeck extends React.Component {
 
     this.state = {
       name: '',
-      cards: [{front: '', back: ''}],
+      cards: [{ front: '', back: '' }],
       isValid: false,
     };
   }
 
+  //Function to handle changes in the input field
   handleDeckChange = deckName => {
     this.setState({ name: deckName }, this.validateForm);
   };
@@ -20,10 +21,12 @@ export default class AddDeck extends React.Component {
     this.setState({ isValid: true });
   };
 
+  //Data of input field is submitted
   handleSubmit = () => {
     this.props.onSubmit({ name: this.state.name, cards: this.state.cards });
   };
 
+  //The user can enter the name of the new deck
   render() {
     return (
       <View>
@@ -35,7 +38,7 @@ export default class AddDeck extends React.Component {
         />
         <Button
           title="Confirm"
-          color='#f9af00'
+          color="#f9af00"
           onPress={this.handleSubmit}
           disabled={!this.state.isValid}
         />

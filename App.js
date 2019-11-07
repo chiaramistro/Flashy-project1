@@ -3,7 +3,8 @@ import { Text, View, StyleSheet, Button } from 'react-native';
 import DeckList from './DeckList';
 
 export default class App extends React.Component {
-
+  //Home screen of the application, showing the list
+  //of the available decks
   render() {
     return (
       <View style={styles.container}>
