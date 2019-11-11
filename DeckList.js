@@ -31,7 +31,8 @@ export default class DeckList extends React.Component {
     //To ensure that the cards previously added are still visible,
     //a filter should be implemented on 'newCards' to check if there are
     //some new cards that belong to the chosen deck.
-    //The function should be similar also for deleting a card from a deck.
+    //The function should be similar also for deleting a card from a deck and
+    //also to perpetuate the changes on a renaming of a deck.
 
     this.setState({ chosenDeck: true });
   }
